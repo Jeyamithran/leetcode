@@ -21,7 +21,7 @@ export default function QuestionDetail() {
 
         const fetchQuestion = async () => {
             try {
-                const res = await fetch(`/api/questions/\${id}`);
+                const res = await fetch(`/api/questions/${id}`);
                 if (res.ok) {
                     const data = await res.json();
                     setQuestion(data);
@@ -38,7 +38,7 @@ export default function QuestionDetail() {
         fetchQuestion();
 
         // Load user solution from localStorage
-        const savedSolution = localStorage.getItem(`leetcode-solution-\${id}`);
+        const savedSolution = localStorage.getItem(`leetcode-solution-${id}`);
         if (savedSolution) {
             setUserSolution(savedSolution);
         }
@@ -47,7 +47,7 @@ export default function QuestionDetail() {
     const handleUserSolutionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const newValue = e.target.value;
         setUserSolution(newValue);
-        localStorage.setItem(`leetcode-solution-\${id}`, newValue);
+        localStorage.setItem(`leetcode-solution-${id}`, newValue);
     };
 
     const getDifficultyColor = (difficulty: string) => {
