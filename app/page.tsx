@@ -8,6 +8,10 @@ import { Question } from '@/types';
 export default function Home() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   const [filters, setFilters] = useState({
     difficulty: '',
     tag: '',
@@ -21,11 +25,15 @@ export default function Home() {
       if (filters.difficulty) params.append('difficulty', filters.difficulty);
       if (filters.tag) params.append('tag', filters.tag);
       if (filters.search) params.append('search', filters.search);
+      params.append('page', page.toString());
+      params.append('limit', '20');
 
       try {
         const res = await fetch(`/api/questions?\${params.toString()}`);
         const data = await res.json();
-        setQuestions(data);
+        setQuestions(data.data);
+        setTotal(data.total);
+        setTotalPages(data.totalPages);
       } catch (error) {
         console.error('Failed to fetch questions:', error);
       } finally {
@@ -39,10 +47,11 @@ export default function Home() {
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [filters]);
+  }, [filters, page]);
 
   const handleFilterChange = (key: string, value: string) => {
     setFilters(prev => ({ ...prev, [key]: value }));
+    setPage(1); // Reset to page 1 on filter change
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -57,7 +66,7 @@ export default function Home() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">Problems</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-4">Problems ({total})</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
           <div>
@@ -111,7 +120,7 @@ export default function Home() {
             ) : (
               questions.map((question) => (
                 <li key={question.id}>
-                  <Link href={`/question/${question.id}`} className="block hover:bg-gray-50">
+                  <Link href={`/question/\${question.id}`} className="block hover:bg-gray-50">
                     <div className="px-4 py-4 sm:px-6">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center truncate">
@@ -131,22 +140,57 @@ export default function Home() {
                           ))}
                         </div>
                       </div>
-                      <div className="mt-2 sm:flex sm:justify-between">
-                        <div className="sm:flex">
-                          <p className="flex items-center text-sm text-gray-500">
-                            Time: {question.timeComplexity}
-                          </p>
-                          <p className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 sm:ml-6">
-                            Space: {question.spaceComplexity}
-                          </p>
-                        </div>
-                      </div>
                     </div>
                   </Link>
                 </li>
               ))
             )}
           </ul>
+
+          {/* Pagination Controls */}
+          <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+            <div className="flex-1 flex justify-between sm:hidden">
+              <button
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+            <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm text-gray-700">
+                  Showing page <span className="font-medium">{page}</span> of <span className="font-medium">{totalPages}</span>
+                </p>
+              </div>
+              <div>
+                <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                  <button
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                    disabled={page === totalPages}
+                    className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                  >
+                    Next
+                  </button>
+                </nav>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

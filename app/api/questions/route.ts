@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { questions } from '@/data/questions';
+import { getQuestions } from '@/lib/questionLoader';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -7,7 +7,11 @@ export async function GET(request: Request) {
     const tag = searchParams.get('tag');
     const search = searchParams.get('search');
 
-    let filteredQuestions = questions;
+    // Pagination
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '50');
+
+    let filteredQuestions = getQuestions();
 
     if (difficulty) {
         filteredQuestions = filteredQuestions.filter(q => q.difficulty === difficulty);
@@ -24,8 +28,13 @@ export async function GET(request: Request) {
         );
     }
 
+    const total = filteredQuestions.length;
+    const start = (page - 1) * limit;
+    const end = start + limit;
+    const paginatedQuestions = filteredQuestions.slice(start, end);
+
     // Return only summary fields for the list view to save bandwidth
-    const summaryQuestions = filteredQuestions.map(({ id, title, difficulty, tags, timeComplexity, spaceComplexity }) => ({
+    const summaryQuestions = paginatedQuestions.map(({ id, title, difficulty, tags, timeComplexity, spaceComplexity }) => ({
         id,
         title,
         difficulty,
@@ -34,5 +43,10 @@ export async function GET(request: Request) {
         spaceComplexity,
     }));
 
-    return NextResponse.json(summaryQuestions);
+    return NextResponse.json({
+        data: summaryQuestions,
+        total,
+        page,
+        totalPages: Math.ceil(total / limit)
+    });
 }

@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
-import { questions } from '@/data/questions';
+import { getQuestions } from '@/lib/questionLoader';
 
 export async function GET(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
+    const questions = getQuestions();
     const question = questions.find(q => q.id === id);
 
     if (!question) {
