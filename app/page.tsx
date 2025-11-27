@@ -111,7 +111,7 @@ export default function Home() {
             ) : (
               questions.map((question) => (
                 <li key={question.id}>
-                  <Link href={`/question/\${question.id}`} className="block hover:bg-gray-50">
+                  <Link href={`/question/${question.id}`} className="block hover:bg-gray-50">
                     <div className="px-4 py-4 sm:px-6">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center truncate">
