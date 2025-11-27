@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CodePractice Hub
+
+A mobile-friendly web application for practicing coding interview problems, inspired by LeetCode.
+
+## Features
+
+- **Question Catalog**: Browse problems with filtering by difficulty, tags, and search.
+- **Problem Details**: View problem descriptions, examples, and constraints.
+- **Code Editor**: Write your own solution (auto-saved to your browser).
+- **Official Solutions**: View collapsible Java solutions with time/space complexity and explanations.
+- **Discussion**: Read and post comments for each question.
+- **Responsive Design**: Works great on mobile and desktop.
+
+## Tech Stack
+
+- **Frontend**: React (Next.js App Router)
+- **Backend**: Next.js API Routes
+- **Styling**: Tailwind CSS
+- **Language**: TypeScript
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Node.js (v18 or higher recommended)
+- npm
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
-## Learn More
+3. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-To learn more about Next.js, take a look at the following resources:
+## Adding New Questions
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+To add more questions to the platform:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Open `data/questions.ts`.
+2. Add a new object to the `questions` array following the `Question` interface.
+   ```typescript
+   {
+     id: '6',
+     title: 'New Problem',
+     difficulty: 'Medium',
+     tags: ['Array'],
+     description: 'Problem description...',
+     examples: [...],
+     timeComplexity: 'O(n)',
+     spaceComplexity: 'O(1)',
+     javaSolution: 'class Solution { ... }',
+     solutionExplanation: ['Step 1...', 'Step 2...']
+   }
+   ```
 
-## Deploy on Vercel
+## Editing Content
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Java Solutions**: Edit the `javaSolution` string in `data/questions.ts`.
+- **Complexity Info**: Edit `timeComplexity` and `spaceComplexity` in `data/questions.ts`.
+- **UI Styling**:
+  - Global styles: `app/globals.css`
+  - Components: `components/` directory
+  - Pages: `app/page.tsx` and `app/question/[id]/page.tsx`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deployment
+
+This app is ready to be deployed on Vercel or any platform that supports Next.js.
